@@ -809,7 +809,6 @@
       "ChatRequest": {
         "type": "object",
         "required": [
-          "model",
           "messages"
         ],
         "properties": {
@@ -854,7 +853,8 @@
           "model": {
             "type": "string",
             "description": "[UNUSED] ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.",
-            "example": "mistralai/Mistral-7B-Instruct-v0.2"
+            "example": "mistralai/Mistral-7B-Instruct-v0.2",
+            "nullable": true
           },
           "n": {
             "type": "integer",
@@ -1116,7 +1116,6 @@
       "CompletionRequest": {
         "type": "object",
         "required": [
-          "model",
           "prompt"
         ],
         "properties": {
@@ -1138,7 +1137,8 @@
           "model": {
             "type": "string",
             "description": "UNUSED\nID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.",
-            "example": "mistralai/Mistral-7B-Instruct-v0.2"
+            "example": "mistralai/Mistral-7B-Instruct-v0.2",
+            "nullable": true
           },
           "prompt": {
             "$ref": "#/components/schemas/Prompt"
