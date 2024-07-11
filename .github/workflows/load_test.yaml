@@ -58,7 +58,6 @@ jobs:
 
       - name: Run load test
         run: |
-          ls -lah /tmp/artifacts
           cd load_tests
           make load-test
         shell: bash

@@ -78,6 +78,8 @@ def main():
                     for f in os.listdir(f'{prev_root}/{d}'):
                         if f.endswith('.csv'):
                             csv_path = os.path.join('/tmp/artifacts', d, f)
+                            # only keep short commit hash
+                            d = d[:7]
                             dfs = merge_previous_results(csv_path, dfs, d)
         except Exception as e:
             logger.error(f'Error while merging previous results, skipping: {e}')
