@@ -66,16 +66,22 @@ def main():
             logger.error(f'Directory {directory} does not exist')
             continue
         dfs = parse_json_files(directory, test_type)
-        # check if we have previous results CSV file by listing /tmp/artifacts directory, merge them if they exist
-        if os.path.exists('/tmp/artifacts'):
-            for f in os.listdir('/tmp/artifacts'):
-                if f.endswith('.csv'):
-                    csv_path = os.path.join('/tmp/artifacts', f)
-                    dfs = merge_previous_results(csv_path, dfs, f.split('-')[-1])
-        plot_metrics(dfs, test_type, test_type.value.lower())
         # save the data to a csv file
         path = f"{os.getcwd()}/{test_type.value.lower()}.csv"
         dfs.to_csv(f"{path}")
+        # check if we have previous results CSV file by listing /tmp/artifacts directory, merge them if they exist
+        prev_root = '/tmp/artifacts'
+        try:
+            if os.path.exists(prev_root):
+                directories = [item for item in os.listdir(prev_root) if os.path.isdir(os.path.join(prev_root, item))]
+                for d in directories:
+                    for f in os.listdir(f'{prev_root}/{d}'):
+                        if f.endswith('.csv'):
+                            csv_path = os.path.join('/tmp/artifacts', f)
+                            dfs = merge_previous_results(csv_path, dfs, d)
+        except Exception as e:
+            logger.error(f'Error while merging previous results, skipping: {e}')
+        plot_metrics(dfs, test_type, test_type.value.lower())
 
 
 if __name__ == '__main__':
