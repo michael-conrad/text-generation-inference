@@ -73,6 +73,9 @@ def main():
                     csv_path = os.path.join('/tmp/artifacts', f)
                     dfs = merge_previous_results(csv_path, dfs, f.split('-')[-1])
         plot_metrics(dfs, test_type, test_type.value.lower())
+        # save the data to a csv file
+        path = f"{os.getcwd()}/{test_type.value.lower()}.csv"
+        dfs.to_csv(f"{path}")
 
 
 if __name__ == '__main__':
