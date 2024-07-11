@@ -43,6 +43,19 @@ jobs:
         with:
           python-version: 3.11
 
+      - name: Download artifacts from previous runs
+        uses: actions/github-script@v6
+        continue-on-error: true
+        env:
+          WORKFLOW_FILENAME: load_test.yaml
+          ARTIFACT_NAME: benchmark_results_csv
+          ARTIFACT_FILENAME: benchmark_results_csv.zip
+          UNZIP_DIR: /tmp/artifacts
+        with:
+          script: |
+            const script = require('./load_tests/download_artifact.js')
+            await script({github, context, core})
+
       - name: Run load test
         run: |
           cd load_tests
@@ -52,13 +65,13 @@ jobs:
       - name: Archive test results plot artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: plots
+          name: benchmark_results_plots
           path: |
             load_tests/*.png
 
       - name: Archive test results csv artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: csv
+          name: benchmark_results_csv
           path: |
             load_tests/*.csv

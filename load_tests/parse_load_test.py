@@ -108,10 +108,6 @@ def main():
     for test_type in [TestType.CONSTANT_VUS, TestType.CONSTANT_ARRIVAL_RATE]:
         directory = f"results/{test_type.value.lower()}"
         dfs = parse_json_files(directory, test_type)
-        # save the data to a csv file
-        path = f"{os.getcwd()}/{test_type.value.lower()}.csv"
-        logger.info(f"Saving data to {path}")
-        dfs.to_csv(f"{path}")
         plot_metrics(dfs, test_type, test_type.value.lower())
 
 
