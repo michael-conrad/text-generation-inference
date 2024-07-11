@@ -36,4 +36,4 @@ jobs:
       - name: Run load test
         run: |
           cd load_tests
-          make build-k6
+          make load-test
