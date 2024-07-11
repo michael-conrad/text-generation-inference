@@ -2,6 +2,7 @@ import json
 import os
 from enum import Enum
 import pandas as pd
+from loguru import logger
 
 from matplotlib import pyplot as plt
 import scienceplots
@@ -99,6 +100,7 @@ def plot_metrics(df: pd.DataFrame, test_type: TestType, save_name: str):
         plt.suptitle('Constant VUs Load Test', fontsize=16)
     elif test_type == TestType.CONSTANT_ARRIVAL_RATE:
         plt.suptitle('Constant Arrival Rate Load Test', fontsize=16)
+    logger.info(f"Saving plot to {save_name}.png")
     plt.savefig(f"{save_name}.png")
 
 
@@ -108,7 +110,9 @@ def main():
         dfs = parse_json_files(directory, test_type)
         plot_metrics(dfs, test_type, test_type.value.lower())
         # save the data to a csv file
-        dfs.to_csv(f"{test_type.value.lower()}.csv")
+        path = f"{os.getcwd()}/{test_type.value.lower()}.csv"
+        logger.info(f"Saving data to {path}")
+        dfs.to_csv(f"{path}")
 
 
 if __name__ == "__main__":
