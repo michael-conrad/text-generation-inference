@@ -172,7 +172,9 @@ class K6Benchmark:
         logger.info(f"K6Config is: {self.k6_config}")
         # start a k6 subprocess
         self.process = subprocess.Popen(args,
-                                        stdout=subprocess.STDOUT, stderr=subprocess.STDOUT, shell=True)
+                                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+        for line in iter(self.process.stdout.readline, b""):
+            print(line.decode("utf-8"))
         self.process.wait()
         self.add_config_to_summary()
         self.add_config_to_results()

@@ -37,7 +37,7 @@ def main():
     # run TGI
     try:
         logger.info("Running TGI")
-        runner.run([("max-concurrent-requests", max_concurrent_requests)])
+        # runner.run([("max-concurrent-requests", max_concurrent_requests)])
         logger.info("TGI is running")
         run_full_test("tgi")
     except Exception as e:
