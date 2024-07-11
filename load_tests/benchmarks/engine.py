@@ -138,7 +138,7 @@ def run_docker(image: str, args: str, success_sentinel: str,
                                       shm_size="1g",
                                       ports={"8080/tcp": 8080})
     for line in container.logs(stream=True):
-        print(line.decode("utf-8"))
+        print(line.decode("utf-8"), end="")
         if success_sentinel.encode("utf-8") in line:
             break
         if error_sentinel.encode("utf-8") in line:

@@ -167,14 +167,14 @@ class K6Benchmark:
 
     def run(self):
         self.k6_config.executor.render()
-        args = f"stdbuf -oL /tmp/k6-sse run --out json=results.json {self.k6_config.executor.rendered_file}"
+        args = f"/tmp/k6-sse run --out json=results.json {self.k6_config.executor.rendered_file}"
         logger.info(f"Running k6 with parameters: {args}")
         logger.info(f"K6Config is: {self.k6_config}")
         # start a k6 subprocess
         self.process = subprocess.Popen(args,
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
         while buffer := os.read(self.process.stdout.fileno(),
-                                4096):  # read the output of the process, don't buffer on new lines
+                                2048):  # read the output of the process, don't buffer on new lines
             print(buffer.decode(), end='')
         self.process.wait()
         logger.info(f"K6 process finished with return code {self.process.returncode}")

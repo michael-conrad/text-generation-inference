@@ -22,6 +22,7 @@ def run_full_test(engine_name: str):
             k6_config = K6Config(f"{engine_name}", k6_executor)
             benchmark = K6Benchmark(k6_config, "results/load_test")
             benchmark.run()
+            return
         for c in vus_concurrences:
             logger.info(f"Running k6 with constant VUs with concurrency {c} with input type {input_type.value}")
             k6_executor = K6ConstantVUsExecutor(c, "60s", input_type)
@@ -37,7 +38,7 @@ def main():
     # run TGI
     try:
         logger.info("Running TGI")
-        # runner.run([("max-concurrent-requests", max_concurrent_requests)])
+        runner.run([("max-concurrent-requests", max_concurrent_requests)])
         logger.info("TGI is running")
         run_full_test("tgi")
     except Exception as e:
