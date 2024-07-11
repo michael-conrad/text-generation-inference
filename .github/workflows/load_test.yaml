@@ -54,11 +54,11 @@ jobs:
         with:
           name: plots
           path: |
-            *.png
+            load_tests/*.png
 
       - name: Archive test results csv artifacts
         uses: actions/upload-artifact@v4
         with:
           name: csv
           path: |
-            *.csv
+            load_tests/*.csv
