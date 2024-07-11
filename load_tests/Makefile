@@ -1,3 +1,4 @@
+.PHONY: download-dataset load-test build-k6
 download-dataset:
 	@if [ ! -f ./benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json ]; then \
 		echo "Downloading dataset"; \
