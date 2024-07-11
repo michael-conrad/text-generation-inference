@@ -33,7 +33,7 @@ def run_full_test(engine_name: str):
             benchmark.run()
 
 
-def merge_previous_results(csv_path: str, df: pd.DataFrame, version_id: str) -> pd.Dataframe:
+def merge_previous_results(csv_path: str, df: pd.DataFrame, version_id: str) -> pd.DataFrame:
     if os.path.exists(csv_path):
         previous_df = pd.read_csv(csv_path)
         previous_df['name'] = previous_df['name'].str.replace('tgi', f'tgi_{version_id}')
