@@ -19,5 +19,5 @@ build-k6:
 	go install go.k6.io/xk6/cmd/xk6@latest && \
 	xk6 build master && \
 	mkdir -p ~/.local/bin/ && \
-	mv k6 ~/.local/bin/k6-sse && \
-	~/.local/bin/k6-sse --version
+	mv k6 /tmp/k6-sse && \
+	/tmp/k6-sse --version
