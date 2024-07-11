@@ -46,6 +46,8 @@ module.exports = async ({
             archive_format: 'zip'
         });
         require('fs').writeFileSync(process.env.ARTIFACT_FILENAME, Buffer.from(response.data));
+        // create directory to unzip
+        require('fs').mkdirSync(`${process.env.UNZIP_DIR}/${artifact.workflow_run.head_sha}`, {recursive: true});
         require('child_process').execSync(`unzip -o ${process.env.ARTIFACT_FILENAME} -d ${process.env.UNZIP_DIR}/${artifact.workflow_run.head_sha}`);
 
         console.log("Artifact downloaded successfully");
