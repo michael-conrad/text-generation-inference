@@ -17,7 +17,7 @@ build-k6:
 	cd xk6-sse && \
 	git checkout useSobek && \
 	go install go.k6.io/xk6/cmd/xk6@latest && \
-	xk6 build master && \
+	xk6 build --with github.com/phymbert/xk6-sse=. && \
 	mkdir -p ~/.local/bin/ && \
 	mv k6 /tmp/k6-sse && \
 	rm -rf /tmp/xk6 && \
