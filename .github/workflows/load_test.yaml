@@ -31,7 +31,7 @@ jobs:
       - name: Install texlive minimal
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive
+          sudo apt-get install -y texlive-latex-extra texlive-fonts-recommended dvipng cm-super
 
       - name: Install Go 1.21
         uses: actions/setup-go@v2
