@@ -28,6 +28,11 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           poetry --version
 
+      - name: Install texlive minimal
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive
+
       - name: Install Go 1.21
         uses: actions/setup-go@v2
         with:
