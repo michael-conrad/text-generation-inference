@@ -174,8 +174,8 @@ class K6Benchmark:
         # start a k6 subprocess
         self.process = subprocess.Popen(args,
                                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
-        for line in iter(self.process.stdout.readline, b""):
-            print(line.decode("utf-8"))
+        while buffer := os.read(self.process.stdout.fileno(), 4096):
+            print(buffer.decode(), end='')
         self.process.wait()
         logger.info(f"K6 process finished with return code {self.process.returncode}")
         self.add_config_to_summary()

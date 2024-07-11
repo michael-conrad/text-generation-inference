@@ -8,7 +8,7 @@ download-dataset:
 	fi
 
 load-test: download-dataset build-k6
-	poetry install && poetry run python load_test.py
+	bash -c "poetry install && poetry run python load_test.py"
 
 build-k6:
 	mkdir -p /tmp/xk6 && \
@@ -20,4 +20,5 @@ build-k6:
 	xk6 build master && \
 	mkdir -p ~/.local/bin/ && \
 	mv k6 /tmp/k6-sse && \
+	rm -rf /tmp/xk6 && \
 	/tmp/k6-sse --version
