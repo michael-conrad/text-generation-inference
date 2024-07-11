@@ -12,12 +12,11 @@ load-test: download-dataset build-k6
 
 build-k6:
 	mkdir -p /tmp/xk6 && \
-	pushd /tmp/xk6 && \
+	cd /tmp/xk6 && \
 	git clone https://github.com/mstoykov/xk6-sse.git && \
 	cd xk6-sse && \
 	git checkout useSobek && \
 	go install go.k6.io/xk6/cmd/xk6@latest && \
 	xk6 build master && \
 	mkdir -p ~/.local/bin/ && \
-	mv k6 ~/.local/bin/k6-sse && \
-	popd
+	mv k6 ~/.local/bin/k6-sse
