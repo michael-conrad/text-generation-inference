@@ -107,6 +107,8 @@ def main():
         directory = f"results/{test_type.value.lower()}"
         dfs = parse_json_files(directory, test_type)
         plot_metrics(dfs, test_type, test_type.value.lower())
+        # save the data to a csv file
+        dfs.to_csv(f"{test_type.value.lower()}.csv")
 
 
 if __name__ == "__main__":

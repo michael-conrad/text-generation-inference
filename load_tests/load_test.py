@@ -1,3 +1,4 @@
+import os
 import time
 import traceback
 
@@ -51,6 +52,10 @@ def main():
 
     for test_type in [TestType.CONSTANT_VUS, TestType.CONSTANT_ARRIVAL_RATE]:
         directory = f"results/{test_type.value.lower()}"
+        # check if directory exists
+        if not os.path.exists(directory):
+            logger.error(f"Directory {directory} does not exist")
+            continue
         dfs = parse_json_files(directory, test_type)
         plot_metrics(dfs, test_type, test_type.value.lower())
 
