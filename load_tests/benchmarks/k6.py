@@ -168,7 +168,7 @@ class K6Benchmark:
     def run(self):
         self.k6_config.executor.render()
         args = f"/tmp/k6-sse run --out json=results.json {self.k6_config.executor.rendered_file}"
-        args = f"/tmp/k6-sse --version"
+        args = f"ls -lah"
         logger.info(f"Running k6 with parameters: {args}")
         logger.info(f"K6Config is: {self.k6_config}")
         # start a k6 subprocess
