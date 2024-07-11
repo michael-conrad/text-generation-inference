@@ -21,7 +21,7 @@ def run_full_test(engine_name: str):
             logger.info(f"Running k6 with constant arrival rate for {c} req/s with input type {input_type.value}")
             k6_executor = K6ConstantArrivalRateExecutor(2000, c, "60s", input_type)
             k6_config = K6Config(f"{engine_name}", k6_executor)
-            benchmark = K6Benchmark(k6_config, "results/load_test")
+            benchmark = K6Benchmark(k6_config, "results/")
             benchmark.run()
             return
         for c in vus_concurrences:
@@ -51,7 +51,7 @@ def main():
         time.sleep(5)
 
     for test_type in [TestType.CONSTANT_VUS, TestType.CONSTANT_ARRIVAL_RATE]:
-        directory = f"results/tgi_{test_type.value.lower()}"
+        directory = f"results/{test_type.value.lower()}"
         # check if directory exists
         if not os.path.exists(directory):
             logger.error(f"Directory {directory} does not exist")
