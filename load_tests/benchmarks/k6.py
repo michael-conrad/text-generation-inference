@@ -178,6 +178,7 @@ class K6Benchmark:
             print(buffer.decode(), end='')
         self.process.wait()
         logger.info(f"K6 process finished with return code {self.process.returncode}")
+        logger.info(f"Writing results to {self.get_results_path()}")
         self.add_config_to_summary()
         self.add_config_to_results()
 

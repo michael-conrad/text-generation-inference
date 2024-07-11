@@ -51,7 +51,7 @@ def main():
         time.sleep(5)
 
     for test_type in [TestType.CONSTANT_VUS, TestType.CONSTANT_ARRIVAL_RATE]:
-        directory = f"results/{test_type.value.lower()}"
+        directory = f"results/tgi_{test_type.value.lower()}"
         # check if directory exists
         if not os.path.exists(directory):
             logger.error(f"Directory {directory} does not exist")
