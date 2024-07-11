@@ -74,7 +74,7 @@ class TGIDockerRunner(InferenceEngineRunner):
         self.volumes = volumes
 
     def run(self, parameters: list[tuple]):
-        params = ""
+        params = f"--model-id {self.model} --port 8080"
         for p in parameters:
             params += f" --{p[0]} {str(p[1])}"
         logger.info(f"Running TGI with parameters: {params}")
@@ -82,7 +82,7 @@ class TGIDockerRunner(InferenceEngineRunner):
         for v in self.volumes:
             volumes[v[0]] = {"bind": v[1], "mode": "rw"}
         self.container = run_docker(self.image, params,
-                                    "Server listening on",
+                                    "Connected",
                                     "Error",
                                     volumes=volumes)
 
