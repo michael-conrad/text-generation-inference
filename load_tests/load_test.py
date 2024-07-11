@@ -77,7 +77,7 @@ def main():
                 for d in directories:
                     for f in os.listdir(f'{prev_root}/{d}'):
                         if f.endswith('.csv'):
-                            csv_path = os.path.join('/tmp/artifacts', f)
+                            csv_path = os.path.join('/tmp/artifacts', d, f)
                             dfs = merge_previous_results(csv_path, dfs, d)
         except Exception as e:
             logger.error(f'Error while merging previous results, skipping: {e}')
