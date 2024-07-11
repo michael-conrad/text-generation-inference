@@ -5,7 +5,7 @@ from benchmarks.engine import TGIDockerRunner
 from benchmarks.k6 import K6Config, K6Benchmark, K6ConstantArrivalRateExecutor, K6ConstantVUsExecutor, ExecutorInputType
 from loguru import logger
 
-from load_tests.parse_load_test import TestType, parse_json_files, plot_metrics
+from parse_load_test import TestType, parse_json_files, plot_metrics
 
 
 def run_full_test(engine_name: str):
