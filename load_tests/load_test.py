@@ -21,14 +21,14 @@ def run_full_test(engine_name: str):
         for c in arrival_rates:
             logger.info(f'Running k6 with constant arrival rate for {c} req/s with input type {input_type.value}')
             k6_executor = K6ConstantArrivalRateExecutor(2000, c, '60s', input_type)
-            k6_config = K6Config(f'{engine_name}', k6_executor)
+            k6_config = K6Config(f'{engine_name}', k6_executor, input_num_tokens=200)
             benchmark = K6Benchmark(k6_config, 'results/')
             benchmark.run()
             return
         for c in vus_concurrences:
             logger.info(f'Running k6 with constant VUs with concurrency {c} with input type {input_type.value}')
             k6_executor = K6ConstantVUsExecutor(c, '60s', input_type)
-            k6_config = K6Config(f'{engine_name}', k6_executor)
+            k6_config = K6Config(f'{engine_name}', k6_executor, input_num_tokens=200)
             benchmark = K6Benchmark(k6_config, 'results/')
             benchmark.run()
 
