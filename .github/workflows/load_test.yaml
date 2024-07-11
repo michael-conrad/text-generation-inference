@@ -33,6 +33,11 @@ jobs:
         with:
           go-version: 1.21
 
+      - name: Install Python 3.11
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+
       - name: Run load test
         run: |
           cd load_tests
