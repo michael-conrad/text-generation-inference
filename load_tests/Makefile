@@ -7,8 +7,7 @@ download-dataset:
 	fi
 
 load-test: download-dataset build-k6
-	echo "Running load test"
-	python load_test.py
+	poetry install && poetry run python load_test.py
 
 build-k6:
 	mkdir -p /tmp/xk6 && \
