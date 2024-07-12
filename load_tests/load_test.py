@@ -11,24 +11,26 @@ from parse_load_test import TestType, parse_json_files, plot_metrics
 
 
 def run_full_test(engine_name: str):
-    vus_concurrences = list(range(0, 1024, 40))
-    vus_concurrences[0] = 1
-    vus_concurrences.append(1024)
-    arrival_rates = list(range(0, 200, 10))
-    arrival_rates[0] = 1
-    arrival_rates.append(200)
+    # vus_concurrences = list(range(0, 1024, 40))
+    # vus_concurrences[0] = 1
+    # vus_concurrences.append(1024)
+    # arrival_rates = list(range(0, 200, 10))
+    # arrival_rates[0] = 1
+    # arrival_rates.append(200)
+    vus_concurrences = [1]
+    arrival_rates = [1]
     for input_type in [ExecutorInputType.SHAREGPT_CONVERSATIONS, ExecutorInputType.CONSTANT_TOKENS]:
         for c in arrival_rates:
             logger.info(f'Running k6 with constant arrival rate for {c} req/s with input type {input_type.value}')
             k6_executor = K6ConstantArrivalRateExecutor(2000, c, '60s', input_type)
             k6_config = K6Config(f'{engine_name}', k6_executor, input_num_tokens=200)
-            benchmark = K6Benchmark(k6_config, 'results/')
+            benchmark = K6Benchmark(k6_config, f'results/{input_type.value}/')
             benchmark.run()
         for c in vus_concurrences:
             logger.info(f'Running k6 with constant VUs with concurrency {c} with input type {input_type.value}')
             k6_executor = K6ConstantVUsExecutor(c, '60s', input_type)
             k6_config = K6Config(f'{engine_name}', k6_executor, input_num_tokens=200)
-            benchmark = K6Benchmark(k6_config, 'results/')
+            benchmark = K6Benchmark(k6_config, f'results/{input_type.value}/')
             benchmark.run()
 
 
@@ -58,31 +60,34 @@ def main():
         runner.stop()
         time.sleep(5)
 
-    for test_type in [TestType.CONSTANT_VUS, TestType.CONSTANT_ARRIVAL_RATE]:
-        directory = f'results/{test_type.value.lower()}'
-        # check if directory exists
-        if not os.path.exists(directory):
-            logger.error(f'Directory {directory} does not exist')
-            continue
-        dfs = parse_json_files(directory, test_type)
-        # save the data to a csv file
-        path = f"{os.getcwd()}/{test_type.value.lower()}.csv"
-        dfs.to_csv(f"{path}")
-        # check if we have previous results CSV file by listing /tmp/artifacts directory, merge them if they exist
-        prev_root = '/tmp/artifacts'
-        try:
-            if os.path.exists(prev_root):
-                directories = [item for item in os.listdir(prev_root) if os.path.isdir(os.path.join(prev_root, item))]
-                for d in directories:
-                    for f in os.listdir(f'{prev_root}/{d}'):
-                        if f.endswith('.csv'):
-                            csv_path = os.path.join('/tmp/artifacts', d, f)
-                            # only keep short commit hash
-                            d = d[:7]
-                            dfs = merge_previous_results(csv_path, dfs, d)
-        except Exception as e:
-            logger.error(f'Error while merging previous results, skipping: {e}')
-        plot_metrics(dfs, test_type, test_type.value.lower())
+    for input_type in [ExecutorInputType.SHAREGPT_CONVERSATIONS, ExecutorInputType.CONSTANT_TOKENS]:
+        for test_type in [TestType.CONSTANT_VUS, TestType.CONSTANT_ARRIVAL_RATE]:
+            directory = os.path.join('results', input_type.value.lower(), test_type.value.lower())
+            # check if directory exists
+            if not os.path.exists(directory):
+                logger.error(f'Directory {directory} does not exist')
+                continue
+            dfs = parse_json_files(directory, test_type)
+            # save the data to a csv file
+            path = os.path.join(os.getcwd(), f'{input_type.value.lower()}_{test_type.value.lower()}.csv')
+            dfs.to_csv(path)
+            # check if we have previous results CSV file by listing /tmp/artifacts/<input_type> directory,
+            # merge them if they exist
+            prev_root = '/tmp/artifacts'
+            try:
+                if os.path.exists(prev_root):
+                    directories = [item for item in os.listdir(prev_root) if
+                                   os.path.isdir(os.path.join(prev_root, item))]
+                    for d in directories:
+                        for f in os.listdir(f'{prev_root}/{d}'):
+                            if f.endswith(f'{input_type.value.lower()}_{test_type.value.lower()}.csv'):
+                                csv_path = os.path.join('/tmp/artifacts', d, f)
+                                # only keep short commit hash
+                                d = d[:7]
+                                dfs = merge_previous_results(csv_path, dfs, d)
+            except Exception as e:
+                logger.error(f'Error while merging previous results, skipping: {e}')
+            plot_metrics(dfs, test_type, f'{input_type.value.lower()}_{test_type.value.lower()}')
 
 
 if __name__ == '__main__':
