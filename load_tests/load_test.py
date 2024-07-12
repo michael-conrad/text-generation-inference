@@ -88,7 +88,7 @@ def main():
                                 dfs = merge_previous_results(csv_path, dfs, d)
             except Exception as e:
                 logger.error(f'Error while merging previous results, skipping: {e}')
-            plot_metrics(f'{model}{get_gpu_names()}\n', dfs, test_type,
+            plot_metrics(f'{model} {get_gpu_names()}', dfs, test_type,
                          f'{input_type.value.lower()}_{test_type.value.lower()}')
 
 
