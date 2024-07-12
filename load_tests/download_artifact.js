@@ -48,7 +48,7 @@ module.exports = async ({
         owner,
         repo,
         workflow_id: workflow.id,
-        sha: lastReleaseSha,
+        head_sha: lastReleaseSha,
         status: "success",
         per_page: 1
     });
@@ -67,25 +67,29 @@ module.exports = async ({
     const lastReleaseArtifact = lastReleaseArtifacts.data.artifacts.find(artifact => artifact.name === process.env.ARTIFACT_NAME);
     const lastArtifact = lastArtifacts.data.artifacts.find(artifact => artifact.name === process.env.ARTIFACT_NAME);
 
-    await downloadArtifact(github, owner, repo, core, lastReleaseArtifact, lastReleaseTag);
-    await downloadArtifact(github, owner, repo, core, lastArtifact, lastArtifact.workflow_run.head_sha);
+    if (lastReleaseArtifact) {
+        await downloadArtifact(github, owner, repo, lastReleaseArtifact, lastReleaseTag);
+    } else {
+        console.log("No release artifact found")
+    }
+    if (lastArtifact) {
+        await downloadArtifact(github, owner, repo, lastArtifact, lastArtifact.workflow_run.head_sha);
+    } else {
+        console.log("No last run artifact found")
+    }
 }
 
-async function downloadArtifact(github, owner, repo, core, artifact, suffix) {
-    if (artifact) {
-        const response = await github.rest.actions.downloadArtifact({
-            owner,
-            repo,
-            artifact_id: artifact.id,
-            archive_format: 'zip'
-        });
-        require('fs').writeFileSync(process.env.ARTIFACT_FILENAME, Buffer.from(response.data));
-        // create directory to unzip
-        require('fs').mkdirSync(`${process.env.UNZIP_DIR}/${artifact.workflow_run.head_sha}`, {recursive: true});
-        require('child_process').execSync(`unzip -o ${process.env.ARTIFACT_FILENAME} -d ${process.env.UNZIP_DIR}/${suffix}`);
+async function downloadArtifact(github, owner, repo, artifact, suffix) {
+    const response = await github.rest.actions.downloadArtifact({
+        owner,
+        repo,
+        artifact_id: artifact.id,
+        archive_format: 'zip'
+    });
+    require('fs').writeFileSync(process.env.ARTIFACT_FILENAME, Buffer.from(response.data));
+    // create directory to unzip
+    require('fs').mkdirSync(`${process.env.UNZIP_DIR}/${artifact.workflow_run.head_sha}`, {recursive: true});
+    require('child_process').execSync(`unzip -o ${process.env.ARTIFACT_FILENAME} -d ${process.env.UNZIP_DIR}/${suffix}`);
 
-        console.log(`Artifact ${process.env.ARTIFACT_FILENAME} for ${suffix} downloaded successfully`);
-    } else {
-        core.setFailed("No artifact found");
-    }
+    console.log(`Artifact ${process.env.ARTIFACT_FILENAME} for ${suffix} downloaded successfully`);
 }
