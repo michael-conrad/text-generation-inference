@@ -11,6 +11,11 @@ on:
     branches:
       - 'main'
 
+env:
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.S3_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_AWS_SECRET_ACCESS_KEY }}
+
 jobs:
   load-tests:
     concurrency:
@@ -22,6 +27,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Install awscli
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
 
       - name: Install poetry
         run: |
@@ -70,15 +80,9 @@ jobs:
           path: |
             load_tests/output/*
 
-      - uses: shallwefootball/s3-upload-action@v1.3.3
-        name: Upload to S3
-        id: s3
-        with:
-          aws_key_id: ${{ secrets.S3_AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.S3_AWS_SECRET_ACCESS_KEY}}
-          aws_bucket: text-generation-inference-ci
-          source_dir: 'load_tests/output'
-          destination_dir: '${{ github.sha }}'
+      - name: Upload to S3
+        run: |
+          aws s3 sync load_tests/output/ s3://text-generation-inference-ci/${{ github.sha }}
 
       - uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
@@ -89,8 +93,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: '🚀 Load test results are in:\n\n'+
-                '![ShareGPT constant arrival rate](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/sharegpt_conversations_constant_arrival_rate.png | width=200)\n' +
-                '![ShareGPT constant VUs](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/sharegpt_conversations_constant_vus.png | width=200)\n' +
-                '![Constant token length constant arrival rate](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/constant_tokens_constant_vus.png | width=200)\n' +
-                '![Constant token length constant VUs](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/constant_tokens_constant_arrival_rate.png | width=200)\n'
+                '![ShareGPT constant arrival rate](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/sharegpt_conversations_constant_arrival_rate.png | width=200)\n' +
+                '![ShareGPT constant VUs](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/sharegpt_conversations_constant_vus.png | width=200)\n' +
+                '![Constant token length constant arrival rate](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/constant_tokens_constant_vus.png | width=200)\n' +
+                '![Constant token length constant VUs](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/constant_tokens_constant_arrival_rate.png | width=200)\n'
             })
