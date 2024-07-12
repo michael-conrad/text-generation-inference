@@ -94,9 +94,9 @@ jobs:
               repo: context.repo.repo,
               body: '🚀 Load test results are in:\n\n'+
                 '## Variable length prompts\n'+
-                '<img src="https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/sharegpt_conversations_constant_arrival_rate.png" width=200>\n' +
-                '<img src="https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/sharegpt_conversations_constant_vus.png" width=200>\n\n' +
+                '<img src="http://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/sharegpt_conversations_constant_arrival_rate.png" width=200>\n' +
+                '<img src="http://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/sharegpt_conversations_constant_vus.png" width=200>\n\n' +
                 '## Constant length prompts\n'+
-                '<img src="https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/constant_tokens_constant_vus.png" width=200>\n' +
-                '<img src="https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/constant_tokens_constant_arrival_rate.png" width=200>\n'
+                '<img src="http://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/constant_tokens_constant_vus.png" width=200>\n' +
+                '<img src="http://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{github.sha}}/constant_tokens_constant_arrival_rate.png" width=200>\n'
             })
