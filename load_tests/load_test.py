@@ -18,8 +18,6 @@ def run_full_test(engine_name: str):
     arrival_rates = list(range(0, 200, 10))
     arrival_rates[0] = 1
     arrival_rates.append(200)
-    arrival_rates = [1]
-    vus_concurrences = [1]
     for input_type in [ExecutorInputType.SHAREGPT_CONVERSATIONS, ExecutorInputType.CONSTANT_TOKENS]:
         for c in arrival_rates:
             logger.info(f'Running k6 with constant arrival rate for {c} req/s with input type {input_type.value}')
