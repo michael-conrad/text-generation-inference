@@ -12,14 +12,12 @@ from parse_load_test import TestType, parse_json_files, plot_metrics
 
 
 def run_full_test(engine_name: str):
-    # vus_concurrences = list(range(0, 1024, 40))
-    # vus_concurrences[0] = 1
-    # vus_concurrences.append(1024)
-    # arrival_rates = list(range(0, 200, 10))
-    # arrival_rates[0] = 1
-    # arrival_rates.append(200)
-    vus_concurrences = [1]
-    arrival_rates = [1]
+    vus_concurrences = list(range(0, 1024, 40))
+    vus_concurrences[0] = 1
+    vus_concurrences.append(1024)
+    arrival_rates = list(range(0, 200, 10))
+    arrival_rates[0] = 1
+    arrival_rates.append(200)
     for input_type in [ExecutorInputType.SHAREGPT_CONVERSATIONS, ExecutorInputType.CONSTANT_TOKENS]:
         for c in arrival_rates:
             logger.info(f'Running k6 with constant arrival rate for {c} req/s with input type {input_type.value}')
