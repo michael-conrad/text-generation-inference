@@ -52,11 +52,14 @@ module.exports = async ({
         status: "success",
         per_page: 1
     });
-    const lastReleaseArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
-        owner,
-        repo,
-        run_id: lastReleaseRun.data.workflow_runs[0].id
-    });
+    let lastReleaseArtifacts = {data: {artifacts: []}};
+    if (runs.data.total_count > 0) {
+        lastReleaseArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
+            owner,
+            repo,
+            run_id: lastReleaseRun.data.workflow_runs[0].id
+        });
+    }
 
     const lastArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
         owner,
