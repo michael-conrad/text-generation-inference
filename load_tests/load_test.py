@@ -18,6 +18,8 @@ def run_full_test(engine_name: str):
     arrival_rates = list(range(0, 200, 10))
     arrival_rates[0] = 1
     arrival_rates.append(200)
+    arrival_rates = [1]
+    vus_concurrences = [1]
     for input_type in [ExecutorInputType.SHAREGPT_CONVERSATIONS, ExecutorInputType.CONSTANT_TOKENS]:
         for c in arrival_rates:
             logger.info(f'Running k6 with constant arrival rate for {c} req/s with input type {input_type.value}')
@@ -67,8 +69,10 @@ def main():
                 logger.error(f'Directory {directory} does not exist')
                 continue
             dfs = parse_json_files(directory, test_type)
+            # create output directory if it does not exist
+            os.makedirs('output', exist_ok=True)
             # save the data to a csv file
-            path = os.path.join(os.getcwd(), f'{input_type.value.lower()}_{test_type.value.lower()}.csv')
+            path = os.path.join(os.getcwd(), 'output', f'{input_type.value.lower()}_{test_type.value.lower()}.csv')
             dfs.to_csv(path)
             # check if we have previous results CSV file by listing /tmp/artifacts/<input_type> directory,
             # merge them if they exist
@@ -87,7 +91,7 @@ def main():
             except Exception as e:
                 logger.error(f'Error while merging previous results, skipping: {e}')
             plot_metrics(f'{model} {get_gpu_names()}', dfs, test_type,
-                         f'{input_type.value.lower()}_{test_type.value.lower()}')
+                         f'output/{input_type.value.lower()}_{test_type.value.lower()}')
 
 
 def get_gpu_names() -> str:

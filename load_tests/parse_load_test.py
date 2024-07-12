@@ -67,7 +67,7 @@ def plot_metrics(model_name:str, df: pd.DataFrame, test_type: TestType, save_nam
         vus_param = 'rate'
     fig, axs = plt.subplots(3, 2, figsize=(15, 20))
     fig.tight_layout(pad=6.0)
-    fig.subplots_adjust(hspace=0.2, wspace=0.2, bottom=0.15, top=0.95)
+    fig.subplots_adjust(hspace=0.2, wspace=0.2, bottom=0.15, top=0.92)
 
     names = sorted(df['name'].unique())
     metrics = {'inter_token_latency': {'y': 'Time (ms)'}, 'time_to_first_token': {'y': 'Time (ms)'},

@@ -3,6 +3,7 @@ name: Nightly load test
 on:
   schedule:
     - cron: '0 0 * * 1-5'
+  workflow_call:
 
   pull_request:
     paths:
@@ -62,16 +63,34 @@ jobs:
           make load-test
         shell: bash
 
-      - name: Archive test results plot artifacts
+      - name: Archive test results artifacts
         uses: actions/upload-artifact@v4
         with:
           name: benchmark_results_plots
           path: |
-            load_tests/*.png
+            load_tests/output/*
 
-      - name: Archive test results csv artifacts
-        uses: actions/upload-artifact@v4
+      - uses: shallwefootball/s3-upload-action@v1.3.3
+        name: Upload to S3
+        id: s3
         with:
-          name: benchmark_results_csv
-          path: |
-            load_tests/*.csv
+          aws_key_id: ${{ secrets.S3_AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.S3_AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: text-generation-inference-ci
+          source_dir: 'output'
+          destination_dir: '${{ github.sha }}'
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 Load test results are in:\n\n'+
+                '![ShareGPT constant arrival rate](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/sharegpt_conversations_constant_arrival_rate.png | width=200)\n' +
+                '![ShareGPT constant VUs](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/sharegpt_conversations_constant_vus.png | width=200)\n' +
+                '![Constant token length constant arrival rate](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/constant_tokens_constant_vus.png | width=200)\n' +
+                '![Constant token length constant VUs](https://text-generation-inference-ci.s3-website-us-east-1.amazonaws.com/${{steps.s3.outputs.object_key}}/constant_tokens_constant_arrival_rate.png | width=200)\n'
+            })
