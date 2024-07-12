@@ -64,11 +64,11 @@ module.exports = async ({
         run_id: runs.data.workflow_runs[0].id
     });
 
-    const lastArtifact = lastArtifacts.data.artifacts.find(artifact => artifact.name === process.env.ARTIFACT_NAME);
     const lastReleaseArtifact = lastReleaseArtifacts.data.artifacts.find(artifact => artifact.name === process.env.ARTIFACT_NAME);
+    const lastArtifact = lastArtifacts.data.artifacts.find(artifact => artifact.name === process.env.ARTIFACT_NAME);
 
     await downloadArtifact(github, owner, repo, core, lastReleaseArtifact, lastReleaseTag);
-    await downloadArtifact(github, owner, repo, core, lastArtifact, artifact.workflow_run.head_sha);
+    await downloadArtifact(github, owner, repo, core, lastArtifact, lastArtifact.workflow_run.head_sha);
 }
 
 async function downloadArtifact(github, owner, repo, core, artifact, suffix) {
@@ -84,7 +84,7 @@ async function downloadArtifact(github, owner, repo, core, artifact, suffix) {
         require('fs').mkdirSync(`${process.env.UNZIP_DIR}/${artifact.workflow_run.head_sha}`, {recursive: true});
         require('child_process').execSync(`unzip -o ${process.env.ARTIFACT_FILENAME} -d ${process.env.UNZIP_DIR}/${suffix}`);
 
-        console.log("Artifact downloaded successfully");
+        console.log(`Artifact ${process.env.ARTIFACT_FILENAME} for ${suffix} downloaded successfully`);
     } else {
         core.setFailed("No artifact found");
     }
