@@ -59,7 +59,7 @@ def parse_json_files(directory: str, test_type: TestType) -> pd.DataFrame:
     return df
 
 
-def plot_metrics(df: pd.DataFrame, test_type: TestType, save_name: str):
+def plot_metrics(model_name:str, df: pd.DataFrame, test_type: TestType, save_name: str):
     vus_param = ''
     if test_type == TestType.CONSTANT_VUS:
         vus_param = 'vus'
@@ -67,7 +67,7 @@ def plot_metrics(df: pd.DataFrame, test_type: TestType, save_name: str):
         vus_param = 'rate'
     fig, axs = plt.subplots(3, 2, figsize=(15, 20))
     fig.tight_layout(pad=6.0)
-    fig.subplots_adjust(hspace=0.4, wspace=0.2, bottom=0.15)
+    fig.subplots_adjust(hspace=0.2, wspace=0.2, bottom=0.15, top=0.4)
 
     names = sorted(df['name'].unique())
     metrics = {'inter_token_latency': {'y': 'Time (ms)'}, 'time_to_first_token': {'y': 'Time (ms)'},
@@ -97,9 +97,9 @@ def plot_metrics(df: pd.DataFrame, test_type: TestType, save_name: str):
 
     # show title on top of the figure
     if test_type == TestType.CONSTANT_VUS:
-        plt.suptitle('Constant VUs Load Test', fontsize=16)
+        plt.suptitle(f'{model_name} - Constant VUs Load Test', fontsize=16)
     elif test_type == TestType.CONSTANT_ARRIVAL_RATE:
-        plt.suptitle('Constant Arrival Rate Load Test', fontsize=16)
+        plt.suptitle(f'{model_name} - Constant Arrival Rate Load Test', fontsize=16)
     logger.info(f"Saving plot to {save_name}.png")
     plt.savefig(f"{save_name}.png")
 

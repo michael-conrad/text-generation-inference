@@ -6,6 +6,7 @@ from benchmarks.engine import TGIDockerRunner
 from benchmarks.k6 import K6Config, K6Benchmark, K6ConstantArrivalRateExecutor, K6ConstantVUsExecutor, ExecutorInputType
 from loguru import logger
 import pandas as pd
+import GPUtil
 
 from parse_load_test import TestType, parse_json_files, plot_metrics
 
@@ -87,7 +88,15 @@ def main():
                                 dfs = merge_previous_results(csv_path, dfs, d)
             except Exception as e:
                 logger.error(f'Error while merging previous results, skipping: {e}')
-            plot_metrics(dfs, test_type, f'{input_type.value.lower()}_{test_type.value.lower()}')
+            plot_metrics(f'{model}{get_gpu_names()}\n', dfs, test_type,
+                         f'{input_type.value.lower()}_{test_type.value.lower()}')
+
+
+def get_gpu_names() -> str:
+    gpus = GPUtil.getGPUs()
+    if len(gpus) == 0:
+        return ''
+    return f'{len(gpus)}x{gpus[0].name if gpus else "No GPU available"}'
 
 
 if __name__ == '__main__':
