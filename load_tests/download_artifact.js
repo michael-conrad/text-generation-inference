@@ -53,7 +53,7 @@ module.exports = async ({
         per_page: 1
     });
     let lastReleaseArtifacts = {data: {artifacts: []}};
-    if (runs.data.total_count > 0) {
+    if (lastReleaseRun.data.total_count > 0) {
         lastReleaseArtifacts = await github.rest.actions.listWorkflowRunArtifacts({
             owner,
             repo,
